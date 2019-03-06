@@ -1,7 +1,6 @@
 if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    print('\n'.join(sys.path))
 
 import time
 import gzip
@@ -55,7 +54,7 @@ def run(con, cur):
             map, values = store.prep_mktdata(data)
             sql_map = 'INSERT INTO map (id_mkt, id_contract, name_mkt, name_contract) VALUES %s ON CONFLICT (id_mkt, id_contract) DO NOTHING'
             execute_values(cur, sql_map, map)
-            sql_data = 'INSERT INTO data (time, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
+            sql_data = 'INSERT INTO data (tstamp, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
             execute_values(cur, sql_data, values)
             con.commit()
             cur.close()
@@ -84,4 +83,3 @@ if __name__ == '__main__':
     while True:
         run(con, con.cursor())
         time.sleep(60)
-        run(con, con.cursor())
