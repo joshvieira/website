@@ -1,7 +1,6 @@
 if __name__ == '__main__' and __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    print('\n'.join(sys.path))
 
 import time
 import gzip
@@ -14,7 +13,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 
 
-def run(con, cur):
+def run():
     """
     Download all market data from predictit.com every minute and then
     (1) Save data to disk as compressed json
@@ -52,13 +51,25 @@ def run(con, cur):
             os.replace('./predictit/temp/' + fn0, output_dir + fn)
 
             # postgres
+            con = psycopg2.connect(
+                dbname=Config.PG_DBNAME,
+                user=Config.PG_USER,
+                password=Config.PG_PASS,
+                port=Config.PG_PORT
+            )
+            cur = con.cursor()
+
             map, values = store.prep_mktdata(data)
+
             sql_map = 'INSERT INTO map (id_mkt, id_contract, name_mkt, name_contract) VALUES %s ON CONFLICT (id_mkt, id_contract) DO NOTHING'
             execute_values(cur, sql_map, map)
-            sql_data = 'INSERT INTO data (time, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
+
+            sql_data = 'INSERT INTO data (tstamp, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
             execute_values(cur, sql_data, values)
+
             con.commit()
             cur.close()
+            con.close()
             print('Inserted records for ' + t)
 
         else:  # don't let temp directory get cluttered
@@ -70,18 +81,6 @@ def run(con, cur):
 
 
 if __name__ == '__main__':
-
-    con = psycopg2.connect(
-        dbname=Config.PG_DBNAME,
-        user=Config.PG_USER,
-        password=Config.PG_PWD,
-        port=Config.PG_PORT
-    )
-
-    if not con.closed:
-        print('Successfully connected to Postgres database')
-
     while True:
-        run(con, con.cursor())
+        run()
         time.sleep(60)
-        run(con, con.cursor())
