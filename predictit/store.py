@@ -7,6 +7,7 @@ from config.pgconfig import Config
 
 DATAPATH = 'C:/Users/Josh/Dropbox/projects/predictit_bkp/'
 
+
 def prep_mktdata(fulldata: list):
 
     map = set()
@@ -74,10 +75,11 @@ if __name__ == '__main__':
     )
     cur = con.cursor()
 
-    map, data = prep_block_mktdata(DATAPATH + '201902/')
+    map, data = prep_block_mktdata(DATAPATH + '201901/')
 
     execute_values(cur, 'INSERT INTO map (id_mkt, id_contract, name_mkt, name_contract) VALUES %s ON CONFLICT (id_mkt, id_contract) DO NOTHING', map)
-    execute_values(cur, 'INSERT INTO data (time, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s', data)
-
     con.commit()
+    execute_values(cur, 'INSERT INTO data (tstamp, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s', data)
+    con.commit()
+
     con.close()

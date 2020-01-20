@@ -4,6 +4,11 @@ from bokeh.embed import server_document
 
 
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+
+@app.route('/electability-in-2020')
 def index():
     bokeh_url = 'http://localhost:' + str(app.config.get('BOKEH_PORT')) + '/main'
     bokeh_script = server_document(url=bokeh_url)

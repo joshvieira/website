@@ -1,9 +1,17 @@
 import pickle
-
+import pandas as pd
 from bokeh.layouts import row, column, widgetbox
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, curdoc, show, output_file
 from bokeh.palettes import Category10
+
+INPUT = 'C:/Users/Josh/Dropbox/projects/predictit_bkp/'
+dems = pd.read_csv(INPUT + 'dems.csv')
+dems = dems.pivot(index='tstamp', columns='id_contract', values='yes_mid')
+pres = pd.read_csv(INPUT + 'dems.csv')
+pres = pres.pivot(index='tstamp', columns='id_contract', values='yes_mid')
+
+doc = curdoc()
 
 # upon requesting the bokeh document, we should
 # (1) read in a serialized dataframe, which is kept up to date in a separate process
@@ -24,16 +32,16 @@ p = figure(
     plot_width=1200,
     plot_height=500,
     y_range=(0, y_max)
-    )
+)
 
-kw_legend = dict(
+legend_options = dict(
     click_policy='hide',
     label_text_font='helvetica',
     background_fill_alpha=0,
     border_line_alpha=0
 )
 
-kw_lines = dict(
+line_options = dict(
     line_width=2,
     alpha=1,
     muted_alpha=0.1
@@ -50,17 +58,22 @@ for i in range(len(ts_dem.columns)):
         line_color=palette[i],
         muted_color=palette[i],
         name=name,
-        **kw_lines
+        **line_options
     )
     i += 1
     legend_list.append((name, [g]))
 
-legend = Legend(items=legend_list, location=(0, 100), **kw_legend)
+legend = Legend(
+    items=legend_list,
+    location=(0, 100),
+    **legend_options
+)
+
 p.add_layout(legend, 'right')
 p.toolbar.logo = None
 
 layout = column(
     p
 )
-curdoc().add_root(layout)
-curdoc().title = "Politics!"
+doc.add_root(layout)
+doc.title = "Politics!"

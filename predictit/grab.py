@@ -1,7 +1,6 @@
-if __name__ == '__main__' and __package__ is None:
+if __name__ == 'main' and  __package__ is None:
     from os import sys, path
     sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-    print('\n'.join(sys.path))
 
 import time
 import gzip
@@ -12,7 +11,7 @@ from predictit import store
 from config.pgconfig import Config
 import psycopg2
 from psycopg2.extras import execute_values
-
+import pandas as pd
 
 def run(con, cur):
     """
@@ -74,7 +73,7 @@ if __name__ == '__main__':
     con = psycopg2.connect(
         dbname=Config.PG_DBNAME,
         user=Config.PG_USER,
-        password=Config.PG_PWD,
+        password=Config.PG_PASS,
         port=Config.PG_PORT
     )
 
@@ -83,5 +82,4 @@ if __name__ == '__main__':
 
     while True:
         run(con, con.cursor())
-        time.sleep(60)
-        run(con, con.cursor())
+        time.sleep(60 * 5)
