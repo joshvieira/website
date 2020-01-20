@@ -13,7 +13,7 @@ import psycopg2
 from psycopg2.extras import execute_values
 import pandas as pd
 
-def run(con, cur):
+def run():
     """
     Download all market data from predictit.com every minute and then
     (1) Save data to disk as compressed json
@@ -51,13 +51,25 @@ def run(con, cur):
             os.replace('./predictit/temp/' + fn0, output_dir + fn)
 
             # postgres
+            con = psycopg2.connect(
+                dbname=Config.PG_DBNAME,
+                user=Config.PG_USER,
+                password=Config.PG_PASS,
+                port=Config.PG_PORT
+            )
+            cur = con.cursor()
+
             map, values = store.prep_mktdata(data)
+
             sql_map = 'INSERT INTO map (id_mkt, id_contract, name_mkt, name_contract) VALUES %s ON CONFLICT (id_mkt, id_contract) DO NOTHING'
             execute_values(cur, sql_map, map)
-            sql_data = 'INSERT INTO data (time, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
+
+            sql_data = 'INSERT INTO data (tstamp, id_mkt, id_contract, yes_bid, yes_ask, yes_mid, isopen) VALUES %s'
             execute_values(cur, sql_data, values)
+
             con.commit()
             cur.close()
+            con.close()
             print('Inserted records for ' + t)
 
         else:  # don't let temp directory get cluttered
@@ -69,6 +81,7 @@ def run(con, cur):
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
 
     con = psycopg2.connect(
         dbname=Config.PG_DBNAME,
@@ -83,3 +96,8 @@ if __name__ == '__main__':
     while True:
         run(con, con.cursor())
         time.sleep(60 * 5)
+=======
+    while True:
+        run()
+        time.sleep(60)
+>>>>>>> ee5915c222b1f4672e5e7e431a6d4ca93716d573
