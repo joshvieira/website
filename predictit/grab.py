@@ -1,7 +1,3 @@
-if __name__ == 'main' and  __package__ is None:
-    from os import sys, path
-    sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
-
 import time
 import gzip
 import requests
@@ -13,10 +9,11 @@ import psycopg2
 from psycopg2.extras import execute_values
 import pandas as pd
 
-def run():
+
+def run(con):
     """
     Download all market data from predictit.com every minute and then
-    (1) Save data to disk as compressed json
+    (1) Save data to disk as compressed json if minute ends in 0 or 5
     (2) Write to postgres tables
     :return:
     """
@@ -36,13 +33,14 @@ def run():
         data = r.json()['markets']
         t = data[0]['timeStamp']
         t = t.replace('-', '').replace(':', '').split('.', 1)[0]
+        is_5th_minute = pd.Timestamp(t).minute % 5 == 0
         fn = t + '.json.gz'
 
         # if this is data we haven't seen before,
         # (1) save to appropriate raw output directory
         # (2) upload data to postgres
         output_dir = './predictit/output/' + fn[:6] + '/'
-        if not os.path.exists(output_dir + fn):
+        if is_5th_minute and not os.path.exists(output_dir + fn):
 
             if not os.path.isdir(output_dir):
                 os.makedirs(output_dir)
@@ -81,23 +79,7 @@ def run():
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-
-    con = psycopg2.connect(
-        dbname=Config.PG_DBNAME,
-        user=Config.PG_USER,
-        password=Config.PG_PASS,
-        port=Config.PG_PORT
-    )
-
-    if not con.closed:
-        print('Successfully connected to Postgres database')
-
-    while True:
-        run(con, con.cursor())
-        time.sleep(60 * 5)
-=======
     while True:
         run()
         time.sleep(60)
->>>>>>> ee5915c222b1f4672e5e7e431a6d4ca93716d573
+
