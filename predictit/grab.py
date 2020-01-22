@@ -10,7 +10,7 @@ from psycopg2.extras import execute_values
 import pandas as pd
 
 
-def run(con):
+def run():
     """
     Download all market data from predictit.com every minute and then
     (1) Save data to disk as compressed json if minute ends in 0 or 5
