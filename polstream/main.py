@@ -1,79 +1,190 @@
-import pickle
+from config.flaskconfig import ProdConfig
 import pandas as pd
-from bokeh.layouts import row, column, widgetbox
+from bokeh.layouts import row, column, widgetbox, Spacer
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, curdoc, show, output_file
-from bokeh.palettes import Category10
+from bokeh.palettes import Category10 as clr_palette
+import redis
+import pyarrow as pa
 
-INPUT = 'C:/Users/Josh/Dropbox/projects/predictit_bkp/'
-dems = pd.read_csv(INPUT + 'dems.csv')
-dems = dems.pivot(index='tstamp', columns='id_contract', values='yes_mid')
-pres = pd.read_csv(INPUT + 'dems.csv')
-pres = pres.pivot(index='tstamp', columns='id_contract', values='yes_mid')
+CUTOFF = 0.15  # minimum required contract price in democratic candidate market in order to show probability
+YMAX_DEMS = 0.6
+YMAX_PRES = 1.0
+YMIN_PROB = 0.4
+YMAX_PROB = 0.9
+LOC_LEGEND = 220
+PLOT_WIDTH=1000
+PLOT_HEIGHT=420
+
+r = redis.Redis(port=ProdConfig.REDIS_PORT)
+context = pa.default_serialization_context()
+dems_d = pa.deserialize(r.get('dems_d'))
+pres_d = pa.deserialize(r.get('pres_d'))
+prob_d = pa.deserialize(r.get('prob_d'))
+r.close()
+prob_d = prob_d.mask(dems_d < CUTOFF)
+
+keep = ['Joe Biden', 'Bernie Sanders', 'Elizabeth Warren', 'Mike Bloomberg', 'Pete Buttigieg', 'Kamala Harris']
+dems_d = dems_d[keep]
+pres_d = pres_d[keep]
+prob_d = prob_d[keep.append('Donald Trump')]
 
 doc = curdoc()
 
-# upon requesting the bokeh document, we should
-# (1) read in a serialized dataframe, which is kept up to date in a separate process
-# (2) continue to append to this dataframe using callbacks specific to the bokeh session
-# (3) stream the dataframe updates to the ColumnDataSources
-
-with open('./data/pres.p', 'rb') as handle:
-    ts_dem, ts_pres, ts_cond = pickle.load(handle)
-
 # store in columndatasource format
-source_dems = ColumnDataSource(ts_dem)
-source_pres = ColumnDataSource(ts_pres)
-source_cond = ColumnDataSource(ts_cond)
+source_dems = ColumnDataSource(dems_d)
+source_pres = ColumnDataSource(pres_d)
+source_prob = ColumnDataSource(prob_d)
 
-y_max = 0.4
-p = figure(
-    x_axis_type="datetime",
-    plot_width=1200,
-    plot_height=500,
-    y_range=(0, y_max)
-)
 
-legend_options = dict(
-    click_policy='hide',
-    label_text_font='helvetica',
-    background_fill_alpha=0,
-    border_line_alpha=0
-)
+def gen_dems():
 
-line_options = dict(
-    line_width=2,
-    alpha=1,
-    muted_alpha=0.1
-)
-
-palette = Category10[10]
-legend_list = []
-for i in range(len(ts_dem.columns)):
-    name = ts_dem.columns[i]
-    g = p.line(
-        x='tstamp',
-        y=name,
-        source=source_dems,
-        line_color=palette[i],
-        muted_color=palette[i],
-        name=name,
-        **line_options
+    p = figure(
+        title='Probability of receiving Democratic Party nomination',
+        x_axis_type="datetime",
+        plot_width=PLOT_WIDTH,
+        plot_height=PLOT_HEIGHT,
+        y_range=(0, YMAX_DEMS),
+        toolbar_location='above'
     )
-    i += 1
-    legend_list.append((name, [g]))
 
-legend = Legend(
-    items=legend_list,
-    location=(0, 100),
-    **legend_options
-)
+    legend_options = dict(
+        click_policy='hide',
+        label_text_font='helvetica',
+        background_fill_alpha=0,
+        border_line_alpha=0
+    )
 
-p.add_layout(legend, 'right')
-p.toolbar.logo = None
+    line_options = dict(
+        line_width=3,
+        alpha=1,
+        muted_alpha=0.1
+    )
 
+    palette = clr_palette[10]
+    legend_list = []
+    for i in range(len(dems_d.columns)):
+        name = dems_d.columns[i]
+        g = p.line(
+            x='tstamp',
+            y=name,
+            source=source_dems,
+            line_color=palette[i],
+            muted_color=palette[i],
+            name=name,
+            **line_options
+        )
+
+        p.add_tools(HoverTool(
+
+            tooltips=[
+                ('date', '@tstamp{%F}'),
+                ('name', '@{}'.format(name).split(' ')[-1]),
+                ('value', '$y{0.2f}')
+            ],
+
+            formatters={
+                'tstamp': 'datetime'
+            },
+
+            renderers=[g],
+
+            mode='mouse',
+
+            toggleable=False
+        ))
+
+        i += 1
+        legend_list.append((name, [g]))
+
+    legend = Legend(
+        items=legend_list,
+        location=(0, LOC_LEGEND),
+        **legend_options
+    )
+
+    p.add_layout(legend, 'right')
+    p.toolbar.logo = None
+
+    return p
+
+def gen_prob(x_range):
+
+    p = figure(
+        title="Probability of becoming President GIVEN chosen as party's nominee",
+        x_axis_type="datetime",
+        x_range=x_range,
+        plot_width=PLOT_WIDTH,
+        plot_height=PLOT_HEIGHT,
+        y_range=(YMIN_PROB, YMAX_PROB),
+        toolbar_location='above'
+    )
+
+    legend_options = dict(
+        click_policy='hide',
+        label_text_font='helvetica',
+        background_fill_alpha=0,
+        border_line_alpha=0
+    )
+
+    line_options = dict(
+        line_width=3,
+        alpha=1,
+        muted_alpha=0.1
+    )
+
+    palette = clr_palette[10]
+    legend_list = []
+    for i in range(len(prob_d.columns)):
+        name = prob_d.columns[i]
+        g = p.line(
+            x='tstamp',
+            y=name,
+            source=source_prob,
+            line_color=palette[i],
+            muted_color=palette[i],
+            name=name,
+            **line_options
+        )
+
+        p.add_tools(HoverTool(
+
+            tooltips=[
+                ('date', '@tstamp{%F}'),
+                ('name', '@{}'.format(name).split(' ')[-1]),
+                ('value', '$y{0.2f}')
+            ],
+
+            formatters={
+                'tstamp': 'datetime'
+            },
+
+            renderers=[g],
+
+            mode='mouse',
+
+            toggleable=False
+        ))
+
+        i += 1
+        legend_list.append((name, [g]))
+
+    legend = Legend(
+        items=legend_list,
+        location=(0, LOC_LEGEND),
+        **legend_options
+    )
+
+    p.add_layout(legend, 'right')
+    p.toolbar.logo = None
+
+    return p
+
+dems = gen_dems()
+prob = gen_prob(dems.x_range)
 layout = column(
-    p
+    dems,
+    Spacer(height=20),
+    prob
 )
 doc.add_root(layout)
-doc.title = "Politics!"
