@@ -19,19 +19,24 @@ def get_market_data():
     cur = con.cursor()
 
     # sql
-    sql_pres = 'SELECT tstamp, yes_mid, map.name_contract FROM dems ' \
-               'INNER JOIN map ' \
-               'ON dems.id_contract = map.id_contract ' \
-               'WHERE map.id_mkt=3698;'
-    pres = pd.read_sql(sql_pres, con)
-    pres = pres.pivot(index='tstamp', columns='name_contract', values='yes_mid')
-
-    sql_dems = 'SELECT tstamp, yes_mid, map.name_contract FROM pres ' \
-               'INNER JOIN map ' \
-               'ON pres.id_contract = map.id_contract ' \
-               'WHERE map.id_mkt=3633;'
+    sql_dems = """
+               SELECT tstamp, yes_mid, map.name_contract FROM pres 
+               INNER JOIN map 
+               ON pres.id_contract = map.id_contract 
+               WHERE map.id_mkt=3633
+               """
     dems = pd.read_sql(sql_dems, con)
     dems = dems.pivot(index='tstamp', columns='name_contract', values='yes_mid')
+
+    sql_pres = """
+               SELECT tstamp, yes_mid, map.name_contract FROM dems 
+               INNER JOIN map 
+               ON dems.id_contract = map.id_contract 
+               WHERE map.id_mkt=3698
+               """
+    pres = pd.read_sql(sql_pres, con)
+    pres = pres.pivot(index='tstamp', columns='name_contract', values='yes_mid')
+    trump_pres = pres.pop('Donald Trump').to_frame()  # deal with Trump separately
 
     sql_trump_nom = """
                     SELECT tstamp, yes_mid, map.name_contract from data 
@@ -42,16 +47,6 @@ def get_market_data():
                     """
     trump_nom = pd.read_sql(sql_trump_nom, con)
     trump_nom = trump_nom.pivot(index='tstamp', columns='name_contract', values='yes_mid')
-
-    sql_trump_pres = """
-                     SELECT tstamp, yes_mid, map.name_contract from data 
-                     INNER JOIN map 
-                     ON data.id_contract = map.id_contract 
-                     WHERE data.id_mkt = 3698 
-                     AND map.name_contract = 'Donald Trump'
-                     """
-    trump_pres = pd.read_sql(sql_trump_pres, con)
-    trump_pres = trump_pres.pivot(index='tstamp', columns='name_contract', values='yes_mid')
 
     dems_prob = pres / dems
     trump_prob = trump_pres / trump_nom
