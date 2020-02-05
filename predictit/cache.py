@@ -27,6 +27,7 @@ def get_market_data():
                """
     dems = pd.read_sql(sql_dems, con)
     dems = dems.pivot(index='tstamp', columns='name_contract', values='yes_mid')
+    dems = dems.rename(columns={'Mike Bloomberg': 'Michael Bloomberg'})
 
     sql_pres = """
                SELECT tstamp, yes_mid, map.name_contract FROM dems 
@@ -36,6 +37,7 @@ def get_market_data():
                """
     pres = pd.read_sql(sql_pres, con)
     pres = pres.pivot(index='tstamp', columns='name_contract', values='yes_mid')
+    pres = pres.rename(columns={'Mike Bloomberg': 'Michael Bloomberg'})
     trump_pres = pres.pop('Donald Trump').to_frame()  # deal with Trump separately
 
     sql_trump_nom = """

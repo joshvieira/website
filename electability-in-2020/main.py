@@ -27,7 +27,7 @@ tmp = prob_d.pop('Donald Trump')
 prob_d = prob_d.mask(dems_d < CUTOFF)
 prob_d = pd.concat([prob_d, tmp], axis=1)
 
-keep = ['Joe Biden', 'Bernie Sanders', 'Elizabeth Warren', 'Pete Buttigieg', 'Kamala Harris']
+keep = ['Joe Biden', 'Bernie Sanders', 'Elizabeth Warren', 'Pete Buttigieg', 'Michael Bloomberg']
 dems_d = dems_d[keep]
 pres_d = pres_d[keep]
 prob_d = prob_d[keep + ['Donald Trump']]
