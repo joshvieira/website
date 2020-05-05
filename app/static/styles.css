@@ -1,0 +1,24 @@
+/* grey: f4f4f4 */
+/* teal: 8ec6c5 */
+/* blue: 6983aa */
+/* purple: 8566aa */
+
+body {
+  background: #f4f4f4;
+  margin: 0 auto;
+}
+
+main {
+  margin: 0 auto;
+  width: 800px;
+  padding: 40px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+a {
+  color: #8ec6c5;
+}
+
+a:visited {
+  color: #8566aa;
+}
