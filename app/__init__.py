@@ -7,8 +7,10 @@ app = Flask(__name__)
 from app import routes
 
 config = ProdConfig()
-if os.environ['ENV'] is not None:
+try:
     if os.environ['ENV'] == 'dev':
         config = DevConfig()
+except KeyError:
+    pass
 
 app.config.from_object(config)
