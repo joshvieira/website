@@ -1,65 +1,67 @@
 from config.flaskconfig import ProdConfig
-from config.pgconfig import Config
-import psycopg2
+from database.utils import get_sqlalchemy_engine
+from database.orm.predictit import Dems, Pres, Map, Data
+
+from sqlalchemy.orm import sessionmaker
 import pandas as pd
 import redis
 import time
 import pyarrow as pa
 
 
+engine = get_sqlalchemy_engine('pg10')
+
+
 def get_market_data():
 
-    # postgres
-    con = psycopg2.connect(
-        dbname=Config.PG_DBNAME,
-        user=Config.PG_USER,
-        password=Config.PG_PASS,
-        port=Config.PG_PORT
-    )
-    cur = con.cursor()
+    session = sessionmaker(bind=get_sqlalchemy_engine('pg10'))()
 
-    # sql
-    sql_dems = """
-               SELECT tstamp, yes_mid, map.name_contract FROM pres 
-               INNER JOIN map 
-               ON pres.id_contract = map.id_contract 
-               WHERE map.id_mkt=3633
-               """
-    dems = pd.read_sql(sql_dems, con)
+    # Democratic Party nomination data
+    query_obj = (
+        session.query(Dems.tstamp, Dems.yes_mid, Map.name_contract)
+               .join(Map, Map.id_contract==Dems.id_contract)
+    )
+    dems = pd.read_sql(query_obj.statement, engine)
     dems = dems.pivot(index='tstamp', columns='name_contract', values='yes_mid')
     dems = dems.rename(columns={'Mike Bloomberg': 'Michael Bloomberg'})
 
-    sql_pres = """
-               SELECT tstamp, yes_mid, map.name_contract FROM dems 
-               INNER JOIN map 
-               ON dems.id_contract = map.id_contract 
-               WHERE map.id_mkt=3698
-               """
-    pres = pd.read_sql(sql_pres, con)
+
+    # Presidential election data
+    query_obj = (
+        session.query(Pres.tstamp, Pres.yes_mid, Map.name_contract)
+               .join(Map, Map.id_contract==Pres.id_contract)
+    )
+    pres = pd.read_sql(query_obj.statement, engine)
     pres = pres.pivot(index='tstamp', columns='name_contract', values='yes_mid')
     pres = pres.rename(columns={'Mike Bloomberg': 'Michael Bloomberg'})
     trump_pres = pres.pop('Donald Trump').to_frame()  # deal with Trump separately
 
-    sql_trump_nom = """
-                    SELECT tstamp, yes_mid, map.name_contract from data 
-                    INNER JOIN map 
-                    ON data.id_contract = map.id_contract 
-                    WHERE data.id_mkt = 3653 
-                    AND map.name_contract = 'Donald Trump'
-                    """
-    trump_nom = pd.read_sql(sql_trump_nom, con)
+
+    # Republican Party nomination data, limited to just Donald Trump
+    query_obj = (
+        session.query(Data.tstamp, Data.yes_mid, Map.name_contract)
+               .join(Map, Map.id_contract==Data.id_contract)
+               .filter(Data.id_mkt==3653)
+               .filter(Map.name_contract=='Donald Trump')
+    )
+    trump_nom = pd.read_sql(query_obj.statement, engine)
     trump_nom = trump_nom.pivot(index='tstamp', columns='name_contract', values='yes_mid')
+
+
+    # clean up
+    session.close()
+
 
     dems_prob = pres / dems
     trump_prob = trump_pres / trump_nom
     cand_prob = pd.concat([dems_prob, trump_prob], axis=1)
 
+    nom = pd.concat([dems, trump_nom], axis=1)
+    nom_last_day = nom.resample('d').mean().iloc[-1]
+
     dems_d = dems.resample('d').mean()
     pres_d = pres.resample('d').mean()
     prob_d = cand_prob.clip(0, 1).resample('d').mean()
-
-    cur.close()
-    con.close()
 
     context = pa.default_serialization_context()
 
