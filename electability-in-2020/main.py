@@ -1,10 +1,11 @@
 from config.flaskconfig import ProdConfig
+
 import pandas as pd
 from bokeh.layouts import row, column, widgetbox, Spacer
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, curdoc, show, output_file
 from bokeh.palettes import Category10 as clr_palette
-from bokeh.models.widgets import Div, PreText
+from bokeh.models.widgets import Div, PreText, DataTable, TableColumn
 import redis
 import pyarrow as pa
 
@@ -39,6 +40,16 @@ source_dems = ColumnDataSource(dems_d)
 source_pres = ColumnDataSource(pres_d)
 source_prob = ColumnDataSource(prob_d)
 
+def gen_table():
+
+    columns = [
+        TableColumn(field='dems_d', title='Candidates'),
+        TableColumn(field='pres_d', title='Prob{Nomination}'),
+        TableColumn(field='prob_d')
+    ]
+
+    t = DataTable(source=source_dems, )
+    return t
 
 def gen_dems():
 
@@ -186,8 +197,9 @@ def gen_prob(x_range):
 textstyle = style={'font-size': '15px'}
 textwidth = int(PLOT_WIDTH * 0.9)
 
-text0 = Div(text='<u>What can prediction markets tell us about electability?</u>', style={'font-size': '30px'})
+text0 = Div(text='<u>What might prediction markets tell us about electability?</u>', style={'font-size': '30px'})
 text1 = Div(text='29-Jan-2020', style=textstyle)
+text1_1 = Div(text='updated June 2020', style=textstyle)
 
 text2 = Div(text="""By using data from a betting market for political events, we can get an estimate for the 
 'electability' of candidates. On <a href="predictit.com">predictit.com</a>, 
@@ -212,7 +224,7 @@ states
 text6 = Div(text="P(Pres|Nom) = P(Nom|Pres) * P(Pres) / P(Nom)", width=textwidth, style=textstyle)
 text7 = Div(text="""for the events Pres = {candidate wins Presidency} and Nom = {candidate wins party's nomination}. 
 We are implicitly assuming that P(Nom|Pres) = 1, ie that there is no chance a candidate can win 
-the presidency without having received their major party's nomination. This is not much of a stretch. 
+the presidency without having received their major party's nomination. 
 """, width=textwidth, style=textstyle)
 text8 = Div(text="""A larger caveat of this analysis is that it does not tell us about the states of the world in which 
 a candidate is likely to be more or less successful. For instance, at the peak of her popularity Warren had a 51% 
