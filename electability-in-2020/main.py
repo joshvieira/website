@@ -241,7 +241,7 @@ A longer discussion around this topic is contained in
 on p.14.
 """, width=textwidth, style=textstyle)
 text9 = Div(text="""
-Betting limits also prevent Predictit from being an ideal market. 
+Finally, betting limits also prevent Predictit from being an ideal market. 
 They limit the number of people who can be bothered to play the game, 
 and they make it much easier to buy cheap shares than to sell them short. 
 As two experts commented on Twitter,
@@ -275,7 +275,6 @@ column(
     text8,
     text9,
     text10,
-    text11,
     Spacer(height=120)
 ))
 doc.add_root(layout)
