@@ -228,13 +228,13 @@ the presidency without having received their major party's nomination.
 """, width=textwidth, style=textstyle)
 text8 = Div(text="""These numbers do not tell us about the states of the world in which 
 a candidate is likely to be more or less successful. We have to make those inferences ourselves.
-For instance, at the peak of her popularity Warren had a 51% probability of being nominated. 
+For instance, at the peak of her popularity Warren had a 52% probability of being nominated. 
 "Squad" members AOC, Ilan Omar, and Rashida Tlaib endorsed Sanders shortly thereafter, 
 and around the same time Warren began to waiver in her support for Medicare-for-All. 
 These were blows to her credibility as a progressive candidate. 
 Too timid in her willingness to enact institutional change for progressives, 
-but still too loud in her criticisms of those same institutions for those longing for a return to the Obama years, 
-in the end she failed to inspire two large swaths of Democratic voters. 
+but still too harsh in her criticisms of those same institutions for establishment Democrats longing for a return to the Obama years, 
+in the end she failed to arouse enthusiasm in both factions. 
 Her nomination probability declined, as did her conditional probability of becoming president. 
 A longer discussion around this topic is contained in 
 <a href="http://users.nber.org/~jwolfers/Papers/Five%20Questions(NBER).pdf">Wolfers & Zitzewitz (2006)</a>, starting 
