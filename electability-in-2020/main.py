@@ -197,7 +197,7 @@ def gen_prob(x_range):
 textstyle = style={'font-size': '17px'}
 textwidth = int(PLOT_WIDTH * 0.9)
 
-text0 = Div(text='<u>What might prediction markets tell us about electability?</u>', style={'font-size': '30px'})
+text0 = Div(text='<u>What might betting markets tell us about electability?</u>', style={'font-size': '30px'})
 text1 = Div(text='29-Jan-2020', style=textstyle)
 text1_1 = Div(text='Text updated June 2020', style=textstyle)
 
@@ -210,7 +210,8 @@ that a candidate wins the general election given they were chosen as their party
 This is the notion of electability. If nominated, what are the odds of beating your opponent in the general election? 
 """, width=textwidth, style=textstyle)
 
-text3 = Div(text="""The charts below show the two time series respectively.
+text3 = Div(text="""The charts below show how major candidates' nomination probabilities and conditional probabilities 
+have evolved through time.
 """, width=textwidth, style=textstyle)
 
 text4 = Div(text='<u>Technical details, caveats, and comments:</u>', style=textstyle)
@@ -234,7 +235,7 @@ and around the same time Warren began to waiver in her support for Medicare-for-
 These were blows to her credibility as a progressive candidate. 
 Too timid in her willingness to enact institutional change for progressives, 
 but still too harsh in her criticisms of those same institutions for establishment Democrats longing for a return to the Obama years, 
-in the end she failed to arouse enthusiasm in both factions. 
+in the end she failed to arouse enthusiasm in either faction. 
 Her nomination probability declined, as did her conditional probability of becoming president. 
 A longer discussion around this topic is contained in 
 <a href="http://users.nber.org/~jwolfers/Papers/Five%20Questions(NBER).pdf">Wolfers & Zitzewitz (2006)</a>, starting 
