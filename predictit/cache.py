@@ -1,6 +1,6 @@
 from config.flaskconfig import ProdConfig
-from database.utils import get_sqlalchemy_engine
-from database.orm.predictit import Dems, Pres, Map, Data
+from data.utils import get_sqlalchemy_engine
+from data.core.postgres.predictit import Dems, Pres, Map, Data
 
 from sqlalchemy.orm import sessionmaker
 import pandas as pd

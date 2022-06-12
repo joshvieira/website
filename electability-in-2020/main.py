@@ -15,8 +15,8 @@ YMAX_PRES = 1.0
 YMIN_PROB = 0.4
 YMAX_PROB = 0.9
 LOC_LEGEND = 220
-PLOT_WIDTH=1000
-PLOT_HEIGHT=420
+PLOT_WIDTH = 1000
+PLOT_HEIGHT = 420
 
 r = redis.Redis(port=ProdConfig.REDIS_PORT)
 context = pa.default_serialization_context()
