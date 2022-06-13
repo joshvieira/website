@@ -1,16 +1,11 @@
 from flask import Flask
 import os
-from config.flaskconfig import DevConfig, ProdConfig
+from cfg.config import FlaskDev, FlaskProd
 
 app = Flask(__name__)
 
 from app import routes
 
-config = ProdConfig()
-try:
-    if os.environ['ENV'] == 'dev':
-        config = DevConfig()
-except KeyError:
-    pass
+config = FlaskProd() if os.environ.get("ENV") == "prod" else FlaskDev()
 
 app.config.from_object(config)

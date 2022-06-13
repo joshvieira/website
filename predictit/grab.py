@@ -4,7 +4,7 @@ import requests
 import os
 from datetime import datetime
 from predictit import store
-from config.pgconfig import Config
+from cfg.config import PostgresReadWrite
 import psycopg2
 from psycopg2.extras import execute_values
 import pandas as pd
@@ -50,10 +50,10 @@ def run():
 
             # postgres
             con = psycopg2.connect(
-                dbname=Config.PG_DBNAME,
-                user=Config.PG_USER,
-                password=Config.PG_PASS,
-                port=Config.PG_PORT
+                dbname=PostgresReadWrite.NAME,
+                user=PostgresReadWrite.USER,
+                password=PostgresReadWrite.PASS,
+                port=PostgresReadWrite.PORT
             )
             cur = con.cursor()
 

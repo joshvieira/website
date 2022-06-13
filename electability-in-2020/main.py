@@ -1,4 +1,4 @@
-from config.flaskconfig import ProdConfig
+from cfg.config import Redis
 
 import pandas as pd
 from bokeh.layouts import row, column, widgetbox, Spacer
@@ -18,12 +18,12 @@ LOC_LEGEND = 220
 PLOT_WIDTH = 1000
 PLOT_HEIGHT = 420
 
-r = redis.Redis(port=ProdConfig.REDIS_PORT)
-context = pa.default_serialization_context()
-dems_d = pa.deserialize(r.get('dems_d'))
-pres_d = pa.deserialize(r.get('pres_d'))
-prob_d = pa.deserialize(r.get('prob_d'))
-r.close()
+with redis.Redis(port=Redis.PORT) as r:
+    context = pa.default_serialization_context()
+    dems_d = pa.deserialize(r.get('dems_d'))
+    pres_d = pa.deserialize(r.get('pres_d'))
+    prob_d = pa.deserialize(r.get('prob_d'))
+
 tmp = prob_d.pop('Donald Trump')
 prob_d = prob_d.mask(dems_d < CUTOFF)
 prob_d = pd.concat([prob_d, tmp], axis=1)

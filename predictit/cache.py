@@ -1,4 +1,4 @@
-from config.flaskconfig import ProdConfig
+from cfg.config import Redis
 from data.utils import get_sqlalchemy_engine
 from data.core.postgres.predictit import Dems, Pres, Map, Data
 
@@ -76,20 +76,18 @@ def get_market_data():
 
 def push_to_redis(input_data: dict):
 
-    r = redis.Redis(port=ProdConfig.REDIS_PORT)
+    with redis.Redis(port=Redis.PORT) as r:
 
-    for k, v in input_data.items():
-        r.set(name=k, value=v)
+        for k, v in input_data.items():
 
-    r.close()
+            r.set(name=k, value=v)
 
 
 if __name__ == '__main__':
 
     while True:
         try:
-            m = get_market_data()
-            push_to_redis(m)
+            push_to_redis(get_market_data())
             print('Successfully uploaded to Redis at ' + pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S') + '.')
         except Exception as e:
             print(e)

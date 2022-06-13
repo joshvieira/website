@@ -3,7 +3,7 @@ import gzip
 import json
 import psycopg2
 from psycopg2.extras import execute_values
-from config.pgconfig import Config
+from cfg.config import PostgresReadWrite
 
 DATAPATH = 'C:/Users/Josh/Dropbox/projects/predictit_bkp/'
 
@@ -69,9 +69,9 @@ def prep_block_mktdata(datadir):
 if __name__ == '__main__':
 
     con = psycopg2.connect(
-        dbname=Config.PG_DBNAME,
-        user=Config.PG_USER,
-        password=Config.PG_PWD,
+        dbname=PostgresReadWrite.NAME,
+        user=PostgresReadWrite.USER,
+        password=PostgresReadWrite.PASS,
     )
     cur = con.cursor()
 
