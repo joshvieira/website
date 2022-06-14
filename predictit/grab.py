@@ -1,13 +1,15 @@
-import time
-import gzip
-import requests
 import os
+import time
 from datetime import datetime
-from predictit import store
-from cfg.config import PostgresReadWrite
+import gzip
+
+import requests
 import psycopg2
 from psycopg2.extras import execute_values
 import pandas as pd
+
+from cfg.config import PostgresReadWrite
+from predictit import store
 
 
 def run():

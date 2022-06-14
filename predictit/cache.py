@@ -1,4 +1,4 @@
-from cfg.config import Redis
+from cfg.config import Redis, PostgresReadWrite
 from data.utils import get_sqlalchemy_engine
 from data.core.postgres.predictit import Dems, Pres, Map, Data
 
@@ -9,12 +9,12 @@ import time
 import pyarrow as pa
 
 
-engine = get_sqlalchemy_engine('pg10')
+engine = get_sqlalchemy_engine(PostgresReadWrite)
 
 
 def get_market_data():
 
-    session = sessionmaker(bind=get_sqlalchemy_engine('pg10'))()
+    session = sessionmaker(bind=get_sqlalchemy_engine(PostgresReadWrite))()
 
     # Democratic Party nomination data
     query_obj = (

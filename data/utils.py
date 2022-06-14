@@ -5,4 +5,4 @@ def get_sqlalchemy_engine(config):
 
     s = f'postgresql+psycopg2://{config.USER}:{config.PASS}@localhost:{config.PORT}/{config.NAME}'
 
-    return create_engine(s, use_batch_mode=True)
+    return create_engine(s)

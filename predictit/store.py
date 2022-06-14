@@ -1,8 +1,10 @@
 import os
 import gzip
 import json
+
 import psycopg2
 from psycopg2.extras import execute_values
+
 from cfg.config import PostgresReadWrite
 
 DATAPATH = 'C:/Users/Josh/Dropbox/projects/predictit_bkp/'
