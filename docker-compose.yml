@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: web-image
+    entrypoint:
+      - python
+      - app/website.py
+    ports:
+      - target: 5000
+        published: 5000
+
+#  redis:
+#    image: redis:alpine
+#    ports:
+#     - target: 6379
+#       published: 6379
+#
+#  bokeh:
+#    image: web-image
+#    entrypoint:
+#      - bokeh
+#      - serve
+#      - electability-in-2020/main.py
+#      - --port 5006
+#    ports:
+#      - target: 5006
+#        published: 5006
