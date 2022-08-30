@@ -2,6 +2,9 @@ import functools
 import inspect
 import numpy as np
 from scipy.optimize import root
+import matplotlib.pyplot as plt
+import pandas as pd
+import itertools
 
 
 def validate(func):
@@ -45,8 +48,9 @@ def calc_discrete_kelly_bet(p, alpha, b=1):
 
     if alpha == b:
 
+        standard_kelly = get_standard_kelly_bet(p=p, b=b)
+
         q = 1 - p
-        standard_kelly = p - q / b
 
         return standard_kelly / (1 + q)
 
@@ -60,7 +64,7 @@ def calc_discrete_kelly_bet(p, alpha, b=1):
 
         # this quadratic solution behaves as expected... the other does not
         radical = np.sqrt(b_**2 - 4 * a * c)
-        good_root = (-b_ + radical) / (2 * a)
+        good_root = (-b_ - radical) / (2 * a)
 
         return good_root
 
@@ -95,40 +99,55 @@ def calc_uniform_kelly_bet(p, alpha, b=1):
         else:
             return base - (1 - p) / (1 - f)
 
-    standard_kelly = p - (1-p)/b
+    standard_kelly = get_standard_kelly_bet(p=p, b=b)
 
-    return root(_formula, x0=standard_kelly).x[0]
-
-
-def thorp1992(f):
-
-    return (1 / f) * np.log((1 + f) / (1 - 7 * f / 10)) - 17 / 10
+    if alpha == 0:
+        return standard_kelly
+    else:
+        return root(_formula, x0=0.75*standard_kelly).x[0]
 
 
-if __name__ == "__main__":
+def get_standard_kelly_bet(p, b=1):
 
-    a = calc_uniform_kelly_bet(p=1, alpha=17/20, b=1.5/10)
+    edge = b*p - (1-p)
 
-    mu = 0.058
-    sigma = 0.2160
+    return edge / b
 
-    solution1 = root(
-        fun=partial(calc_uniform_kelly_bet, a=sigma * np.sqrt(3), b=mu, p=1), x0=1
-    )
-    solution2 = root(fun=partial(calc_uniform_kelly_bet, a=sigma * 3, b=mu, p=1), x0=1)
 
-    print(f"Uniform with same variance: {solution1.x[0]}")
-    print(f"Uniform with same endpoints: {solution2.x[0]}")
-    print(
-        f"Binary with same variance: {calc_discrete_kelly_bet(p=1, alpha=sigma, b=mu)}"
-    )
-    print(
-        f"Binary with same endpoints: {calc_discrete_kelly_bet(p=1, alpha=sigma*3, b=mu)}"
-    )
+def create_kelly_plot():
 
-    print("OK")
+    alphas = np.arange(0, 2 + 0.1, 0.1)
+    probabilities = np.arange(0.55, 0.95 + 0.1, 0.1)
 
-    # print(
-    #     calc_kelly_bet(p=0.75, alpha=1, b=1),
-    #     calc_kelly_bet(p=0.9, alpha=4, b=.3)
-    # )
+    # standard kelly dataframe
+    df_standard = pd.DataFrame(index=alphas, columns=probabilities)
+    df_standard.loc[:] = [get_standard_kelly_bet(p) for p in probabilities]
+
+    # odds ~ continuous uniform random variable
+    params = list(itertools.product(alphas, probabilities))
+    dimensions = (len(alphas), len(probabilities))
+    data = np.array([calc_uniform_kelly_bet(p=y, alpha=x) for (x, y) in params]).reshape(dimensions)
+    df_uniform = pd.DataFrame(index=alphas, columns=probabilities, data=data)
+
+    # odds ~ discrete (2-outcome) random variable
+    data = np.array([calc_discrete_kelly_bet(p=y, alpha=x) for (x, y) in params]).reshape(dimensions)
+    df_discrete = pd.DataFrame(index=alphas, columns=probabilities, data=data)
+
+    fig, ax = plt.subplots()
+    ax.plot(df_discrete, label=[f"{p=}" for p in probabilities])
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(reversed(handles), reversed(labels), ncol=len(probabilities), bbox_to_anchor=(1.09, 1.14), frameon=False)
+    plt.subplots_adjust(top=.8)
+    ax.set_title(r'$\it{f^*}$ as a function of $\alpha$ when E(odds) = 1', pad=40, fontsize=14)
+    ax.set_prop_cycle(None)
+    ax.plot(df_uniform, linestyle='--')
+    ax.set_xlim(alphas[0], alphas[-1])
+    ax.set_ylim(0, 1)
+    ax.set_xlabel(r"$\alpha$")
+    ax.set_ylabel("Optimal bet size")
+
+    ax.text(1.6, 0.87, "uniform")
+    ax.text(1.33, 0.75, "discrete")
+
+    plt.grid(axis='y', which='major', linestyle='--')
+    plt.show()

@@ -1,4 +1,4 @@
-from kellybetting.kelly import calc_uniform_kelly_bet
+from projects.kellybetting.kelly import calc_uniform_kelly_bet
 
 
 def test_thorp_result_1992():
