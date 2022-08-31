@@ -1,6 +1,6 @@
 ## Setup
 
-To use `.flaskenv`, use pyython-dotenv via:
+With Docker installed and `.env` file in the home directory, run:
 ```bash
-pip install python-dotenv
+docker compose -f docker-compose.yml up
 ```

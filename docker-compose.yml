@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.8'
 
 services:
 
@@ -14,12 +14,29 @@ services:
       - target: 5000
         published: 5000
 
+  postgres:
+    image: postgres:10
+    environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+    env_file:
+      - .env
+    ports:
+      - target: 5432
+        published: 5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
+
 #  redis:
 #    image: redis:alpine
 #    ports:
 #     - target: 6379
 #       published: 6379
-#
+
 #  bokeh:
 #    image: web-image
 #    entrypoint:

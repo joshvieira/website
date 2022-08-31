@@ -2,7 +2,7 @@ name: webenv
 channels:
   - conda-forge
 dependencies:
-  - python=3.10.0
+  - python=3.10.6
 
   # database
   - sqlalchemy
@@ -34,3 +34,4 @@ dependencies:
   - pip:
       - pyarrow
       - redis
+      - python-dotenv
