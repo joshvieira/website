@@ -6,7 +6,8 @@ from scipy.optimize import root
 import matplotlib.pyplot as plt
 import pandas as pd
 import itertools
-from dotenv import load_dotenv
+
+from cfg.config import TEMP_DIR
 
 
 def validate(func):
@@ -123,8 +124,7 @@ def get_standard_kelly_bet(p, b=1):
 
 
 def create_kelly_plot(show=False, save=False):
-
-
+    """ f* as a function of alpha where E(ods)=b=1 """
 
     alphas = np.arange(0, 2 + 0.1, 0.1)
     probabilities = np.arange(0.55, 0.95 + 0.1, 0.1)
@@ -176,9 +176,8 @@ def create_kelly_plot(show=False, save=False):
     if show:
         plt.show()
     if save:
-        load_dotenv()
         fname = "bet_fraction_plot.png"
-        fig.savefig(os.path.join(os.getenv('TEMP_FOLDER'), fname))
+        fig.savefig(os.path.join(TEMP_DIR, fname))
 
 
 if __name__ == "__main__":

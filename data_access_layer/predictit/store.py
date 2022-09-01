@@ -5,8 +5,7 @@ import json
 import psycopg2
 from psycopg2.extras import execute_values
 
-from cfg.config import get_postgres_uri
-from data_access_layer.predictit import TEMP_FOLDER
+from cfg.config import get_postgres_uri, TEMP_DIR
 
 
 def prep_mktdata(fulldata: list):
@@ -77,7 +76,7 @@ if __name__ == "__main__":
     con = psycopg2.connect(get_postgres_uri())
     cur = con.cursor()
 
-    map, data = prep_block_mktdata(TEMP_FOLDER)
+    map, data = prep_block_mktdata(TEMP_DIR)
 
     execute_values(
         cur,

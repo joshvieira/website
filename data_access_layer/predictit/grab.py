@@ -8,8 +8,8 @@ import psycopg2
 from psycopg2.extras import execute_values
 import pandas as pd
 
-from cfg.config import get_postgres_uri
-from data_access_layer.predictit import store, TEMP_FOLDER
+from cfg.config import get_postgres_uri, TEMP_DIR
+from data_access_layer.predictit import store
 
 
 PREDICTIT_API_ENDPOINT = "https://www.predictit.org/api/marketdata/all/"
@@ -29,7 +29,7 @@ def run():
 
         # save immediately
         fn0 = "TEMP" + datetime.now().strftime("%Y%m%d%H%M%S") + ".json.gz"
-        with gzip.open(os.path.join(TEMP_FOLDER, fn0), "w") as f:
+        with gzip.open(os.path.join(TEMP_DIR, fn0), "w") as f:
             f.write(r.content)
 
         # get timestamp from the file
@@ -59,7 +59,7 @@ def run():
             print("Inserted records for " + t)
 
         # Remove the file so directory does not get cluttered
-        os.remove(os.path.join(TEMP_FOLDER, fn0))
+        os.remove(os.path.join(TEMP_DIR, fn0))
 
     except psycopg2.Error as e:
         print(e)
