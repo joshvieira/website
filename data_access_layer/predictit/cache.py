@@ -5,7 +5,7 @@ import redis
 import time
 import pyarrow as pa
 
-from cfg.config import Redis, get_postgres_uri
+from cfg.config import get_postgres_uri, get_redis_host_and_port
 from data.orm.predictit import Dems, Pres, Map, Data
 
 
@@ -13,7 +13,7 @@ engine = create_engine(get_postgres_uri())
 
 
 def _gen_query_object(session, table: DeclarativeMeta):
-    return session.query(table.tstamp, table.yes_mid, table.name_contract).join(
+    return session.query(table.tstamp, table.yes_mid, Map.name_contract).join(
         Map, Map.id_contract == table.id_contract
     )
 
@@ -70,11 +70,8 @@ def get_market_data():
 
 
 def push_to_redis(input_data: dict):
-
-    with redis.Redis(port=Redis.PORT) as r:
-
+    with redis.Redis(**get_redis_host_and_port()) as r:
         for k, v in input_data.items():
-
             r.set(name=k, value=v)
 
 
@@ -82,7 +79,8 @@ if __name__ == "__main__":
 
     while True:
         try:
-            push_to_redis(get_market_data())
+            market_data = get_market_data()
+            push_to_redis(market_data)
             print(
                 "Successfully uploaded to Redis at "
                 + pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")

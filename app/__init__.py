@@ -1,11 +1,16 @@
-from flask import Flask
 import os
+
+from flask import Flask
+from dotenv import load_dotenv
+
 from cfg.config import FlaskDev, FlaskProd
 
+load_dotenv()
 app = Flask(__name__)
 
 from app import routes
 
-config = FlaskProd() if os.environ.get("ENV") == "prod" else FlaskDev()
 
-app.config.from_object(config)
+app.config.from_object(
+    FlaskProd() if os.getenv("ENV", default="dev") == "prod" else FlaskDev()
+)

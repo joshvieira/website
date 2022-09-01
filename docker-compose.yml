@@ -13,6 +13,8 @@ services:
     ports:
       - target: 5000
         published: 5000
+    volumes:
+      - .:/website
 
   postgres:
     image: postgres:10
@@ -28,22 +30,35 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-volumes:
-  pgdata:
+  redis:
+    image: redis:alpine
+    depends_on:
+      - postgres
+    ports:
+     - target: 6379
+       published: 6379
 
-#  redis:
-#    image: redis:alpine
-#    ports:
-#     - target: 6379
-#       published: 6379
+  services:
+    image: web-image
+    depends_on:
+      - redis
+    entrypoint:
+      - sh
+      - scripts/services.sh
+    volumes:
+      - .:/website
 
 #  bokeh:
 #    image: web-image
+#    depends_on:
+#      - startup
 #    entrypoint:
 #      - bokeh
 #      - serve
-#      - electability-in-2020/main.py
-#      - --port 5006
+#      - projects/electability-in-2020
 #    ports:
 #      - target: 5006
 #        published: 5006
+
+volumes:
+  pgdata:

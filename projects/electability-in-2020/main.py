@@ -1,5 +1,3 @@
-from cfg.config import Redis
-
 import pandas as pd
 from bokeh.layouts import row, column, widgetbox, Spacer
 from bokeh.models import ColumnDataSource, HoverTool, Legend
@@ -8,6 +6,9 @@ from bokeh.palettes import Category10 as clr_palette
 from bokeh.models.widgets import Div, PreText, DataTable, TableColumn
 import redis
 import pyarrow as pa
+
+from cfg.config import get_redis_host_and_port
+
 
 CUTOFF = 0.15  # minimum required contract price in democratic candidate market in order to show probability
 YMAX_DEMS = 1.0
@@ -18,7 +19,7 @@ LOC_LEGEND = 220
 PLOT_WIDTH = 1000
 PLOT_HEIGHT = 420
 
-with redis.Redis(port=Redis.PORT) as r:
+with redis.Redis(**get_redis_host_and_port()) as r:
     context = pa.default_serialization_context()
     dems_d = pa.deserialize(r.get('dems_d'))
     pres_d = pa.deserialize(r.get('pres_d'))
