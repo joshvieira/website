@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker, DeclarativeMeta
 import pandas as pd
 import redis
 import time
-import pyarrow as pa
+import pickle
 
 from cfg.config import get_postgres_uri, get_redis_host_and_port
 from data.orm.predictit import Dems, Pres, Map, Data
@@ -58,12 +58,10 @@ def get_market_data():
     pres_d = pres.resample("d").mean()
     prob_d = cand_prob.clip(0, 1).resample("d").mean()
 
-    context = pa.default_serialization_context()
-
     market_data = {
-        "dems_d": context.serialize(dems_d).to_buffer().to_pybytes(),
-        "pres_d": context.serialize(pres_d).to_buffer().to_pybytes(),
-        "prob_d": context.serialize(prob_d).to_buffer().to_pybytes(),
+        "dems_d": pickle.dumps(dems_d, protocol=5),
+        "pres_d": pickle.dumps(pres_d, protocol=5),
+        "prob_d": pickle.dumps(prob_d, protocol=5),
     }
 
     return market_data
@@ -79,8 +77,7 @@ if __name__ == "__main__":
 
     while True:
         try:
-            market_data = get_market_data()
-            push_to_redis(market_data)
+            push_to_redis(get_market_data())
             print(
                 "Successfully uploaded to Redis at "
                 + pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")

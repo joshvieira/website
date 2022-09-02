@@ -5,7 +5,7 @@ from bokeh.plotting import figure, curdoc, show, output_file
 from bokeh.palettes import Category10 as clr_palette
 from bokeh.models.widgets import Div, PreText, DataTable, TableColumn
 import redis
-import pyarrow as pa
+import pickle
 
 from cfg.config import get_redis_host_and_port
 
@@ -20,10 +20,9 @@ PLOT_WIDTH = 1000
 PLOT_HEIGHT = 420
 
 with redis.Redis(**get_redis_host_and_port()) as r:
-    context = pa.default_serialization_context()
-    dems_d = pa.deserialize(r.get('dems_d'))
-    pres_d = pa.deserialize(r.get('pres_d'))
-    prob_d = pa.deserialize(r.get('prob_d'))
+    dems_d = pickle.loads(r.get('dems_d'))
+    pres_d = pickle.loads(r.get('pres_d'))
+    prob_d = pickle.loads(r.get('prob_d'))
 
 tmp = prob_d.pop('Donald Trump')
 prob_d = prob_d.mask(dems_d < CUTOFF)

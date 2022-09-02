@@ -37,6 +37,8 @@ services:
     ports:
      - target: 6379
        published: 6379
+    volumes:
+      - redisdata:/data
 
   services:
     image: web-image
@@ -48,17 +50,21 @@ services:
     volumes:
       - .:/website
 
-#  bokeh:
-#    image: web-image
-#    depends_on:
-#      - startup
-#    entrypoint:
-#      - bokeh
-#      - serve
-#      - projects/electability-in-2020
-#    ports:
-#      - target: 5006
-#        published: 5006
+  bokeh:
+    image: web-image
+    depends_on:
+      - redis
+    entrypoint:
+      - bokeh
+      - serve
+      - projects/electability-in-2020/
+      - --port=5006
+    ports:
+      - target: 5006
+        published: 5006
+    volumes:
+      - .:/website
 
 volumes:
   pgdata:
+  redisdata:
