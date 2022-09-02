@@ -8,6 +8,7 @@ import pickle
 from cfg.config import get_postgres_uri, get_redis_host_and_port
 from data.orm.predictit import Dems, Pres, Map, Data
 
+GOP_NOMINATION_CONTRACT_ID = 3653
 
 engine = create_engine(get_postgres_uri())
 
@@ -39,7 +40,7 @@ def get_market_data():
     query_obj = (
         session.query(Data.tstamp, Data.yes_mid, Map.name_contract)
         .join(Map, Map.id_contract == Data.id_contract)
-        .filter(Data.id_mkt == 3653)
+        .filter(Data.id_mkt == GOP_NOMINATION_CONTRACT_ID)
         .filter(Map.name_contract == "Donald Trump")
     )
     trump_nom = pd.read_sql(query_obj.statement, engine)

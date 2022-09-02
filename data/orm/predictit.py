@@ -93,22 +93,25 @@ if __name__ == "__main__":
     meta.create_all(bind=engine)
 
     # Populate database tables
-    for tablename in ["map", "dems", "pres"]:
+    for tablename in ["map", "dems", "pres", "data"]:
         if tablename == "map":
-            columns = ["id_mkt", "id_contract", "name_mkt", "name_contract"]
+            kwargs = {"names": ["id_mkt", "id_contract", "name_mkt", "name_contract"]}
         else:
-            columns = [
-                "tstamp",
-                "id_mkt",
-                "id_contract",
-                "yes_bid",
-                "yes_ask",
-                "yes_mid",
-                "isopen",
-            ]
+            kwargs = {
+                "names": [
+                    "tstamp",
+                    "id_mkt",
+                    "id_contract",
+                    "yes_bid",
+                    "yes_ask",
+                    "yes_mid",
+                    "isopen",
+                ],
+                "parse_dates": ["tstamp"],
+            }
         data = pd.read_csv(
             os.path.join(os.getenv("POSTGRES_BACKUP_LOCATION"), tablename + ".csv"),
-            names=columns,
+            **kwargs,
         )
         try:
             data.to_sql(
@@ -117,6 +120,8 @@ if __name__ == "__main__":
                 schema=schema_name,
                 index=False,
                 if_exists="append",
+                chunksize=8000,
+                method='multi'
             )
             print(f"{schema_name}.{tablename} data has been uploaded from CSV.")
         except exc.IntegrityError:

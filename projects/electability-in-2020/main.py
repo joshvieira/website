@@ -40,16 +40,6 @@ source_dems = ColumnDataSource(dems_d)
 source_pres = ColumnDataSource(pres_d)
 source_prob = ColumnDataSource(prob_d)
 
-def gen_table():
-
-    columns = [
-        TableColumn(field='dems_d', title='Candidates'),
-        TableColumn(field='pres_d', title='Prob{Nomination}'),
-        TableColumn(field='prob_d')
-    ]
-
-    t = DataTable(source=source_dems, )
-    return t
 
 def gen_dems():
 
@@ -98,7 +88,7 @@ def gen_dems():
             ],
 
             formatters={
-                'tstamp': 'datetime'
+                '@tstamp': 'datetime'
             },
 
             renderers=[g],
@@ -121,6 +111,7 @@ def gen_dems():
     p.toolbar.logo = None
 
     return p
+
 
 def gen_prob(x_range):
 
@@ -170,7 +161,7 @@ def gen_prob(x_range):
             ],
 
             formatters={
-                'tstamp': 'datetime'
+                '@tstamp': 'datetime'
             },
 
             renderers=[g],
@@ -193,6 +184,7 @@ def gen_prob(x_range):
     p.toolbar.logo = None
 
     return p
+
 
 textstyle = style={'font-size': '17px'}
 textwidth = int(PLOT_WIDTH * 0.9)
