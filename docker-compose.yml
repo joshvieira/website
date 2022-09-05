@@ -10,8 +10,7 @@ services:
     restart: always
     entrypoint:
       - gunicorn
-      - --bind=unix:website.sock
-      - --umask=007
+      - --bind=0.0.0.0:5000
       - --workers=3
       - app:app
     ports:
