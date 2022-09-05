@@ -7,13 +7,12 @@ services:
       context: .
       dockerfile: Dockerfile
     image: web-image
-    restart: always
     entrypoint:
-      - gunicorn
-      - --bind=unix:website.sock
-      - --umask=007
-      - --workers=3
-      - app:app
+      - flask
+      - --app=app
+      - --debug
+      - run
+      - --host=0.0.0.0
     ports:
       - target: 5000
         published: 5000
@@ -22,7 +21,6 @@ services:
 
   postgres:
     image: postgres:10
-    restart: always
     environment:
         POSTGRES_USER: ${POSTGRES_USER}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -37,7 +35,6 @@ services:
 
   redis:
     image: redis:alpine
-    restart: always
     depends_on:
       - postgres
     ports:
@@ -48,7 +45,6 @@ services:
 
   services:
     image: web-image
-    restart: always
     depends_on:
       - redis
     entrypoint:
@@ -59,7 +55,6 @@ services:
 
   bokeh:
     image: web-image
-    restart: always
     depends_on:
       - redis
     entrypoint:
@@ -67,10 +62,7 @@ services:
       - serve
       - projects/electability-in-2020/
       - --port=5006
-      - --prefix=/plot
-      - --use-xheaders
-      - --allow-websocket-origin=www.joshvieira.com
-      - --allow-websocket-origin=localhost:5006
+      - --dev
     ports:
       - target: 5006
         published: 5006
