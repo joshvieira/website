@@ -28,9 +28,6 @@ services:
         POSTGRES_DB: ${POSTGRES_DB}
     env_file:
       - .env
-    ports:
-      - target: 5432
-        published: 5432
     volumes:
       - pgdata:/var/lib/postgresql/data
 
