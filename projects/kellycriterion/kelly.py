@@ -168,7 +168,7 @@ def create_kelly_plot(show=False, save=False):
     ax.set_xlabel(r"$\alpha$")
     ax.set_ylabel("Optimal bet size")
 
-    ax.text(1.6, 0.87, "uniform")
+    ax.text(1.6, 0.87, "continuous")
     ax.text(1.33, 0.75, "discrete")
 
     plt.grid(axis="y", which="major", linestyle="--")
