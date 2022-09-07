@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Josh Blog | Optimal betting when odds are random</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/screen.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/pygments.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/print.css') }} type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Josh Vieira" />
+
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Josh Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">            <h4 class="date">Sep 10, 2022</h4>
+
+            <article class="post">
+                <h2 class="title">
+                    <a href="/optimal-betting-when-odds-are-random.html" rel="bookmark" title="Permanent Link to &quot;Optimal betting when odds are random&quot;">Optimal betting when odds are random</a>
+                </h2>
+
+                
+                
+
+                <p>Much has been written about optimal betting strategies for a gambler who is faced with an infinite
+sequence of profitable bets. Here I will briefly describe the “Kelly criterion” for optimal bet sizes and
+extend the discussion to situations where the odds attached to winning are a random variable.
+Finally I will discuss the these results in the context of betting in financial markets.</p>
+<p>An even-odds bet where the probability of winning is greater than <span class="math">\(50\%\)</span> is an example of a profitable bet. How much
+should you wager, as a fraction of your capital, given the opportunity to play this game infinitely many
+times in a row? In 1956 J. L. Kelly Jr., a researcher at Bell Labs, solved the question with the goal of
+maximizing the growth rate of capital. In the situation with even odds, to maximize the growth rate
+you should bet the fraction <span class="math">\(p - q\)</span> of your wealth, where <span class="math">\(p\)</span> is the probability of winning and <span class="math">\(q = 1 – p\)</span> 
+is the probability of losing. 
+For instance if you gain your bet with probability <span class="math">\(p = 75\%\)</span> and lose your bet with
+probability <span class="math">\(q = 25\%\)</span>, then you should wager <span class="math">\(50\%\)</span> of your capital in each period in order to maximize its
+growth rate over the long term. 
+As has been well-documented, betting “full Kelly” is quite aggressive and
+can lead to large losses over the short term. It is not for everybody, but over the long run it dominates any
+other strategy.</p>
+<h3>Fixed odds</h3>
+<p>In general, when the bets pay out odds <span class="math">\(b\)</span> with probability <span class="math">\(p\)</span>, the growth-rate-optimal betting fraction <span class="math">\(f^*\)</span>
+is the value of <span class="math">\(f\)</span> which maximizes expected one-period log wealth. Without loss of generality we can normalize
+our current wealth to be 1, in which case <span class="math">\(f^*\)</span> maximizes</p>
+<div class="math">$$E\{\log_{}(\text{wealth})\}=p\log_{}(1+f)+q\log_{}(1-f)$$</div>
+<p>Taking the derivative with respect to <span class="math">\(f\)</span>, setting equal to zero, and examining second derivative properties
+gives a maximum at</p>
+<div class="math">$$f^*=\frac{pb-q}{b}$$</div>
+<p>Thus, <span class="math">\(f^*\)</span> is the “edge” divided by the odds. 
+Notice that for an even odds bet, <span class="math">\(b=1\)</span> and <span class="math">\(f^*=p – q\)</span> as stated in the paragraph above.</p>
+<h3>Random odds</h3>
+<h4>Case #1: discrete uniform</h4>
+<p>Let’s now consider adding a random component to the odds <span class="math">\(b\)</span>.
+We may still lose our entire bet <span class="math">\(f\)</span> with probability <span class="math">\(q\)</span>, 
+but instead of winning <span class="math">\(bf\)</span> with probability <span class="math">\(p\)</span>, we win</p>
+<div class="math">\begin{equation}
+  \text{Winnings} = 
+  \begin{cases}
+    (b-\alpha)f &amp; \text{with probability $0.5p$} \\
+    (b+\alpha)f &amp; \text{with probability $0.5p$}
+  \end{cases}
+\end{equation}</div>
+<p>for some <span class="math">\(\alpha \geq 0\)</span>. The odds are still <span class="math">\(b\)</span> <em>in expectation</em>, but if <span class="math">\(\alpha &gt; 0\)</span> then there is some variation thrown
+in the mix. By the concavity of the <span class="math">\(\log\)</span> function (Jensen's inequality), 
+we will want to bet somewhat less than the optimal bet amount
+in the fixed-odds case, which I label <span class="math">\(f^*_{\alpha=0}\)</span>. </p>
+<p>What actually is the optimal fraction to bet? How does it relate to <span class="math">\(f^*_{\alpha=0}\)</span>? I will
+address these questions in the remainder of this post.</p>
+<p>Let's define a discrete uniform random variable <span class="math">\(X\)</span> with the following distribution:</p>
+<div class="math">\begin{equation}
+  X = 
+  \begin{cases}
+    b-\alpha &amp; \text{with probability $0.5$} \\
+    b+\alpha &amp; \text{with probability $0.5$}
+  \end{cases}
+\end{equation}</div>
+<div class="math">$$E(X)=b$$</div>
+<div class="math">$$Var(X)=E(X^2)-E(X)^2=\alpha^2$$</div>
+<p>We want to maximize</p>
+<div class="math">\begin{align}
+E\{\log_{}(\text{wealth})\}&amp;=E\{p\log_{}(1+Xf)+q\log_{}(1-f)\} \\
+&amp; = 0.5p\log_{}(1+(b-\alpha)f)+0.5p\log_{}(1+(b+\alpha)f)+q\log_{}(1-f)
+\end{align}</div>
+<p>To maximize this we again take the derivative with respect to <span class="math">\(f\)</span> and set it to zero.
+Some algebra yields the quadratic equation </p>
+<div class="math">$$0=-(b^2–a^2)f^2 + (p(b^2–a^2) + b(p–2))f + p(b+1) – 1$$</div>
+<p>Let’s examine this in the case where <span class="math">\(\alpha=b\)</span>.
+The solution to the equation then becomes</p>
+<div class="math">$$\begin{eqnarray} f^*=\frac{pb-q}{b(1+q)}=\frac{f^*_{\alpha=0}}{1+q} \end{eqnarray}$$</div>
+<p>With <span class="math">\(q&gt;0\)</span>, the optimal bet size is the fixed-odds optimal bet size multiplied by a factor less than 1.
+In the betting setup first described in the previous section,
+with even odds and <span class="math">\(p=75\%\)</span>, the growth rate optimal bet amount is reduced from <span class="math">\(50\%\)</span> to <span class="math">\(40\%\)</span>.</p>
+<p>To keep things simple let’s stick with the even-odds case for the remainder of this post.
+Setting <span class="math">\(b = 1\)</span> into the quadratic equation turns it into
+</p>
+<div class="math">$$0 = -vf^2 + (p(v+1) - 2)f + 2p – 1 \text{ where } v = (1 - a^2)$$</div>
+<p>
+For <span class="math">\(\alpha^2=Var(X)\ne 1\)</span>, the solution becomes:</p>
+<div class="math">$$f^*=\frac{2-p(v+1)\pm\sqrt{p^2(v+1)^2+4(p-1)(v-1)}}{-2v}$$</div>
+<p>We can quickly check which of the two roots to use by setting <span class="math">\(\alpha^2=0 \Rightarrow v=1\)</span>, 
+in which case we have removed the random component and are back to the fixed-odds scenario. 
+The minus sign gives the correct result <span class="math">\(f^*=f^*_{\alpha=0, \text{ }b=1}=p-q\)</span>.</p>
+<h4>Case #2: continuous uniform</h4>
+<p>What if our random odds are continuous and distributed uniformly over the entire interval <span class="math">\([b-\alpha, b+\alpha]\)</span>?</p>
+<p>Let <span class="math">\(Y\)</span> denote these new random odds, with probability density function
+</p>
+<div class="math">\begin{equation}
+  f_Y(y) = 
+  \begin{cases}
+    \frac{1}{2\alpha} &amp; y \in [b-\alpha, b+\alpha] \\
+    0 &amp; \text{otherwise}
+  \end{cases}
+\end{equation}</div>
+<p>Note that <span class="math">\(Var(Y)=\frac{1}{3}\alpha^2=\frac{1}{3}Var(X)\)</span> so that we should be betting <em>more</em> than 
+the discrete-odds case of the previous section for any chosen <span class="math">\(\alpha&gt;0\)</span>. <strong>It can be shown that <span class="math">\(X\)</span> has the highest possible 
+variance of any random variable over the interval <span class="math">\([b-\alpha, b+\alpha]\)</span>, a fact which we will use 
+in the next section to generate conservative betting estimates.</strong> </p>
+<p>Now our objective function is</p>
+<div class="math">\begin{align}
+E\{\log_{}(\text{wealth})\}&amp;=E\{p\log_{}(1+Yf)+q\log_{}(1-f)\} \\
+&amp; = \int_{b-\alpha}^{b+\alpha} \! \left[\frac{p}{2\alpha}\log(1+yf) \, \mathrm{d}y\right] + q\log(1-f)
+\end{align}</div>
+<p>To maximize, take the derivative with respect to <span class="math">\(f\)</span> and set equal to zero</p>
+<div class="math">\begin{align}
+0 &amp;= \frac{p}{2{\alpha}} \int_{b-\alpha}^{b+\alpha} \! \left[\frac{y}{1+fy}\mathrm{d}y\right] - \frac{q}{1-f} \\
+  &amp;= \frac{p}{2{\alpha}f} \int_{b-\alpha}^{b+\alpha} \! \left[\frac{fy}{1+fy}\mathrm{d}y\right] - \frac{q}{1-f} \\
+  &amp;= \frac{p}{2{\alpha}f} \left( \int_{b-\alpha}^{b+\alpha} \! \mathrm{d}y - \int_{b-\alpha}^{b+\alpha} \! \frac{\mathrm{d}y}{1+fy} \right) - \frac{q}{1-f} \\
+  &amp;= \frac{p}{2{\alpha}f} \left( 2\alpha - \frac{1}{f}\log\left(\frac{1+(b+\alpha)f}{1+(b-\alpha)f}\right) \right) - \frac{q}{1-f}
+\end{align}</div>
+<p>Solving numerically for the even-expected-odds case <span class="math">\((b=1)\)</span> for various <span class="math">\(p\)</span> and <span class="math">\(\alpha\)</span> gives 
+the following plot for <span class="math">\(f^*\)</span>. Also included is same plot for the discrete random odds case.</p>
+<p><img alt="image" src={{ url_for("static", filename="bet_fraction_plot.png") }}></p>
+<p>Notice that as <span class="math">\(\alpha \to 0\)</span> the optimal bet amounts converge to the corresponding fixed-odds optimal bet amounts. 
+In the case of <span class="math">\(p=75\%\)</span>, we can see from the chart that the optimal amount to bet is <span class="math">\(50\%\)</span> with fixed odds, 
+and following the solid green line to <span class="math">\(\alpha=1.00\)</span>, the optimal bet amount in the discrete random odds case 
+is <span class="math">\(40\%\)</span>, a result which was proved in an earlier section. Some final things to notice are that <span class="math">\(f^{*}\)</span> in the case of 
+continuously-distributed random odds is greater than the corresponding <span class="math">\(f^*\)</span> for discrete random odds when <span class="math">\(\alpha &gt; 0\)</span>, 
+and even though the difference is not much for <span class="math">\(\alpha\)</span> near zero, it can be considerable for larger <span class="math">\(\alpha\)</span>.</p>
+<h3>Application to financial markets</h3>
+<p>Below is an example of a potential scenario in which the above results may be helpful.
+But it does not constitute financial advice, and you should not trade options unless you are experienced.</p>
+<p>A not-illegal rumor is swirling that company XYZ will receive an acquisition offer some time before the third Friday of the month. Relevant details are:</p>
+<ul>
+<li>XYZ stock trades for €100 </li>
+<li>You assign <span class="math">\(p=25\%\)</span> to the probability of there being a legitimate offer in this time frame</li>
+<li>Should an offer come, you expect it to be for €130 per share, but may be as low as €120 or as high as €140</li>
+<li>Call options on XYZ with strike of €120 cost €1</li>
+<li>If an offer is made, XYZ stock will jump to the offer price, otherwise it will languish and the option will expire worthless</li>
+</ul>
+<p>Assuming your portfolio is all cash and that this XYZ option is the only investible game in town,
+what fraction might you want to bet on the XYZ €120 call?</p>
+<p>Given the option costs €1, the odds of this bet in the event of an offer will range from
+-1 at €120 to +19 at €140. This corresponds to a random odds scenario as described in the post, with <span class="math">\(p=25\%, b=9, \text{and } \alpha=10\)</span>. 
+We can use the results above to calculate the bet amounts.</p>
+<p>With the ability to make this investment infinitely many times(!), the growth-rate optimal bet amounts are:</p>
+<ul>
+<li>16.67% if you fully believe that the offer will be €130 and nothing else (this is the <span class="math">\(\alpha=0\)</span> fixed odds case)</li>
+<li>13.78% if you believe that the offer has an equal chance of being any number between €120 and €140 (uniform continuous odds case)</li>
+<li>7.89% if you want to be conservative (uniform discrete odds case)</li>
+</ul>
+<h3>Conclusion</h3>
+<p>This post started with an explanation of classic growth-rate-optimal (Kelly) betting with odds <span class="math">\(b\)</span>,
+and extended the idea to two cases in which odds are a random variable with expected value <span class="math">\(b\)</span> over fixed a fixed interval.</p>
+<p>The length of the interval is linked to the variance of the odds and to the growth-rate optimal bet amount <span class="math">\(f^*\)</span>. </p>
+<p>For large <span class="math">\(\alpha\)</span> relative to <span class="math">\(b\)</span>, <span class="math">\(f^*\)</span> can vary greatly depending on how the odds are distributed, 
+something which can be seen in the chart and in the application to options trading in the final section.</p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+                <div class="clear"></div>
+
+                <div class="info">
+                    <a href="/optimal-betting-when-odds-are-random.html">posted at 10:20</a>
+                </div>
+            </article>
+            <div class="clear"></div>
+            <footer>
+                <p>
+                <a href="https://github.com/jody-frankowski/blue-penguin">Blue Penguin</a> Theme
+                &middot;
+                Powered by <a href="http://getpelican.com">Pelican</a>
+            </footer>
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>
