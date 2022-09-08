@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Josh's Blog</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/screen.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/pygments.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/print.css') }} type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Josh Vieira" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li class="selected"><a href="/">Home</a></li>
+{#                <li><a href="/pages/about.html">About</a></li>#}
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Josh Vieira's Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">
+
+            <h4 class="date">Jan 29, 2020</h4>
+
+            <article class="post">
+                <h2 class="title">
+                    <a href="https://www.joshvieira.com/plot/electability-in-2020" rel="bookmark" title="Permanent Link to &quot;Electability in 2020&quot;">What might betting markets tell us about electability?</a>
+                </h2>
+
+                <p>
+                    Applying Bayes' Theorem to betting market data I make inferences about electability in the 2020 election.
+                </p>
+                <a href={{ "https://www.joshvieira.com/plot/electability-in-2020" }}>
+                <img src={{ url_for('static', filename='electability_plot.png') }} alt="Electability in 2020">
+                </a>
+
+                <div class="clear"></div>
+
+            </article>
+
+            <h4 class="date">Sep 08, 2022</h4>
+
+            <article class="post">
+
+                <h2 class="title">
+                    <a href={{ url_for("kelly_betting") }} rel="bookmark" title="Permanent Link to &quot;Optimal betting when odds are random&quot;">
+                        Optimal betting when odds are random
+                    </a>
+                </h2>
+
+                <p>
+                    How much should you bet when you don't know what the odds are? With an application to financial markets.
+                </p>
+                <a href={{ url_for('kelly_betting') }}>
+                <img src={{ url_for('static', filename='bet_fraction_plot.png') }} alt="Optimal betting when odds are random" align="left">
+                </a>
+                <div class="clear"></div>
+
+            </article>
+
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>
