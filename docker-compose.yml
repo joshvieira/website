@@ -8,9 +8,11 @@ services:
       dockerfile: Dockerfile
     image: web-image
     restart: always
+    environment:
+      ENV: prod
     entrypoint:
       - gunicorn
-      - --bind=0.0.0.0:5000
+      - --bind=127.0.0.1:5000
       - --workers=3
       - app:app
     ports:
@@ -63,7 +65,6 @@ services:
       - --prefix=/plot
       - --use-xheaders
       - --allow-websocket-origin=www.joshvieira.com
-      - --allow-websocket-origin=localhost:5006
     ports:
       - target: 5006
         published: 5006
