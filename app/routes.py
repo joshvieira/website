@@ -8,5 +8,5 @@ def home():
 
 
 @app.route("/optimal-betting-when-odds-are-random")
-def hello():
+def kelly_betting():
     return render_template("optimal-betting-when-odds-are-random.html")

@@ -10,9 +10,9 @@
   <main>
     <header>
       <h1 class="title">Josh Vieira</h1>
-      <span class="subtitle">Quantitative Researcher</span>
+      <span class="subtitle">Quantitative Research and Software Development</span>
       <nav>
-        <!--
+        <!--0
         <a href="#about">About</a>
         <a href="#contact">Contact</a>
         -->
@@ -21,16 +21,31 @@
     <article>
       <ul class="project-grid">
         <!-- Make a copy of li element for each item on the grid -->
+
         <li>
-          <h4>What might betting markets tell us about electability?</h4>
+          <h4><a href="https://www.joshvieira.com/plot/electability-in-2020">
+              What might betting markets tell us about electability?
+          </a></h4>
           <a href="https://www.joshvieira.com/plot/electability-in-2020">
-            <!-- Swap this image out with so they don't block you -->
             <img
               src={{ url_for('static', filename='edwin-andrade-unsplash.jpg') }}
               alt="What might betting markets tell us about electability?"
             >
           </a>
         </li>
+        <br>
+        <li>
+          <h4><a href={{ url_for('kelly_betting') }}>
+              Optimal betting when odds are random
+          </a></h4>
+          <a href={{ url_for('kelly_betting') }}>
+            <img
+              src={{ url_for('static', filename='jonathan-greenaway-unsplash.jpg') }}
+              alt="Optimal betting when odds are random"
+            >
+          </a>
+        </li>
+
       </ul>
     </article>
   </main>
