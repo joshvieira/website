@@ -15,9 +15,10 @@ services:
       - --bind=127.0.0.1:5000
       - --workers=3
       - app:app
+    env_file:
+      - .env
     ports:
-      - target: 5000
-        published: 5000
+      - "127.0.0.1:5000:5000"
     volumes:
       - .:/website
 
