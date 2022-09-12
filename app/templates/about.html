@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Josh's Blog | About</title>
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/screen.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/pygments.css') }} type="text/css" />
+    <link rel="stylesheet" href={{ url_for('static', filename='blue-penguin/print.css') }} type="text/css" media="print" />
+    <meta name="generator" content="Pelican" />
+    <meta name="description" content="" />
+    <meta name="author" content="Josh Vieira" />
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li class="selected"><a href={{ url_for('about') }}>About</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Josh's Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">
+            <div class="page">
+                <h1>About</h1>
+                <p>Hello! Welcome to my website of personal projects.</p>
+<p>I am a quantitative researcher and developer based in Brooklyn, New York. </p>
+<p>The code behind the projects and website can be found on my <a href="https://github.com/joshvieira/website">Github page</a>.</p>
+<p>Feel free to reach out to met at josh.vieira[at]protonmail[dot]com with any questions.</p>
+<p>-Josh</p>
+            </div>
+
+        </div>
+        <div class="clear"></div>
+    </div>
+</body>
+</html>
