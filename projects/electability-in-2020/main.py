@@ -3,7 +3,6 @@ from bokeh.layouts import row, column, widgetbox, Spacer
 from bokeh.models import ColumnDataSource, HoverTool, Legend
 from bokeh.plotting import figure, curdoc, show, output_file
 from bokeh.palettes import Category10 as clr_palette
-from bokeh.models.widgets import Div, PreText, DataTable, TableColumn
 import redis
 import pickle
 
@@ -186,3 +185,4 @@ doc.add_root(
         name='cols'
     )
 )
+doc.title = 'Estimating electability from betting markets'
