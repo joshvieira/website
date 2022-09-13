@@ -1,0 +1,159 @@
+{% extends base %}
+
+<!-- goes in head -->
+{% block preamble %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="description" content="" />
+    <meta name="author" content="Josh Vieira" />
+    <link rel="stylesheet" href='electability-in-2020/static/screen.css' type="text/css" />
+    <link rel="stylesheet" href='electability-in-2020/static/pygments.css' type="text/css" />
+    <link rel="stylesheet" href='electability-in-2020/static/print.css' type="text/css" media="print" />
+{% endblock %}
+
+<!-- goes in body -->
+{% block contents %}
+    <header>
+        <nav>
+            <ul>
+                <li><a href="https://joshvieira.com">Home</a></li>
+                <li><a href="https://joshvieira.com/about">About</a></li>
+            </ul>
+        </nav>
+        <div class="header_box">
+            <h1><a href="/">Josh's Blog</a></h1>
+        </div>
+    </header>
+    <div id="wrapper">
+        <div id="content">
+            <h4 class="date">Jan 29, 2020</h4>
+            <article class="post">
+                <h2 class="title">
+                    <a href="https://joshvieira.com/plot/electability-in-2020" rel="bookmark" title="Permanent Link to &quot;electability in 2020.&quot;">What might betting markets tell us about electability?</a>
+                </h2>
+                <p>
+By using data from a betting market for political events, we can get an estimate for the
+'electability' of candidates. On <a href="https://www.predictit.com">predictit.com</a>,
+users can bet on which candidates will win each major party's nomination,
+and on which candidates will win the general election. By dividing the price of the latter contracts by the
+price of the former, we get an estimate for the conditional probability
+that a candidate wins the general election given they were chosen as their party's nominee.
+This is the notion of electability. If nominated, what are the odds of beating your opponent in the general election?
+                </p>
+                <p>
+The charts below show how major candidates' nomination probabilities and conditional probabilities
+have evolved through time.
+                </p>
+                <p>{{ embed(roots.cols) }}</p>
+<h4>Technical details, caveats, and comments:</h4>
+                <p>
+Betting market contract data is pulled every 5 minutes using the predictit API. Daily averages of
+contract values and their corresponding ratios are computed and rendered. To avoid spurious spikes in the chart due to
+division by small numbers, the conditional probability is only rendered when a candidate's probability of winning the
+party's nomination is above 15%. The conditional probability arises from Bayes' Theorem, which
+states
+                </p>
+                    <div class="math">$$P(Pres|Nom) = \frac{P(Nom|Pres)P(Pres)}{P(Nom)}$$</div>
+                <p>
+                <span class="math">\(\text{for the events }\)</span>
+                </p>
+                <div class="math">$$Pres = \{\text{candidate wins Presidency}\}$$</div>
+                <div class="math">$$Nom = \{\text{candidate wins party's nomination}\}$$</div>
+<p>We are implicitly assuming that <span class="math">\(P(Nom|Pres) = 1\)</span>, ie that there is no chance a candidate can win
+the presidency without having received their major party's nomination.</p>
+
+<p>These numbers do not tell us about the states of the world in which
+a candidate is likely to be more or less successful. We have to make those inferences ourselves.
+For instance, at the peak of her popularity Warren had a 52% probability of being nominated.
+"Squad" members AOC, Ilan Omar, and Rashida Tlaib endorsed Sanders shortly thereafter,
+and around the same time Warren began to waiver in her support for Medicare-for-All.
+These were blows to her credibility as a progressive candidate.
+Too timid in her willingness to enact institutional change for progressives,
+but still too harsh in her criticisms of those same institutions for establishment Democrats longing for a return to the Obama years,
+in the end she failed to arouse enthusiasm in either faction.
+Her nomination probability declined, as did her conditional probability of becoming president.
+A longer discussion around this topic is contained in
+<a href="http://users.nber.org/~jwolfers/Papers/Five%20Questions(NBER).pdf">Wolfers & Zitzewitz (2006)</a>, starting
+on p.14.
+</p>
+<p>Finally, betting limits and high transaction costs prevent Predictit from being an ideal market.
+   The former makes it much easier to buy cheap shares than to sell them short, and the latter
+   prevents pure arbitrage, allowing for prices to drift far from their fair value.
+   As two experts commented on Twitter,
+</p>
+<img src="electability-in-2020/static/twitter_natesilver.png" alt="" width="525">
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+
+                <div class="clear"></div>
+
+                <div class="info">
+                    <a href="/">posted at 00:00</a>
+                </div>
+            </article>
+        </div>
+        <div class="clear"></div>
+    </div>
+{% endblock %}
