@@ -1,11 +1,12 @@
 import os.path
 import functools
 import inspect
+import itertools
+
 import numpy as np
 from scipy.optimize import root
 import matplotlib.pyplot as plt
 import pandas as pd
-import itertools
 
 from cfg.config import TEMP_DIR
 
@@ -76,7 +77,7 @@ def calc_discrete_kelly_bet(p, alpha, b=1):
 
 
 @validate
-def calc_uniform_kelly_bet(p, alpha, b=1):
+def calc_uniform_kelly_bet(p, alpha, b=1.0):
     """
     Similar to calc_discrete_kelly_bet except the odds draw from a uniform distribution.
     The solution is found numerically.
