@@ -1,5 +1,5 @@
 ## Hello
-This is the repo for the code that runs my website of personal projects.  
+This is the repo for the code that runs [my website](https://www.joshvieira.com/)  of personal projects.  
 Several applications run in Docker containers:
 1. Flask - web server / routing (runs behind Nginx)
 2. Bokeh server - web application for interactive plots
